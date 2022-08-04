@@ -1,0 +1,23 @@
+openapi: "3.0.1"
+info:
+  version: 0.0.1
+  title: Test Push Server API
+  description: Test Push Server API
+paths:
+  /:
+    get:
+      operationId: postHook
+      responses:
+        default:
+          description: "Default response for GET /"
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/hook'
+
+components:
+  x-amazon-apigateway-integrations:
+    hook:
+      type: AWS_PROXY
+      httpMethod: GET
+      uri: "${example_function_arn}"
+      payloadFormatVersion: "2.0"
+      connectionType: INTERNET
