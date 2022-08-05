@@ -876,11 +876,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "aws-config",
- "aws-http",
  "aws-sdk-dynamodb",
- "aws-smithy-client",
- "aws-smithy-http",
- "aws-smithy-types",
  "lambda_http",
  "lambda_runtime",
  "serde",
