@@ -6,6 +6,7 @@ use async_trait::async_trait;
 use tracing::{error, trace, info};
 use std::{env};
 use http::Method;
+use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Serialize, Deserialize)]
 struct TopicRequestBody {
@@ -90,11 +91,18 @@ async fn put_item(
     table: &str,
     topic: &str,
   ) -> Result<(), Error> {
+    let sys_time = SystemTime::now();
+    let since_the_epoch = sys_time.duration_since(UNIX_EPOCH).unwrap();
+    let expiry_in_10_min = since_the_epoch.as_secs() + 600;
     let topic_av = AttributeValue::S(topic.into());
+    let exp_av = AttributeValue::N(expiry_in_10_min.to_string());
+
     let request = client
         .put_item()
         .table_name(table)
-        .item("topic", topic_av);
+        .item("topic", topic_av)
+        .item("expiry", exp_av);
+
     request.send().await?;
 
     Ok(())
