@@ -68,8 +68,6 @@ async fn record_call(
         .table_name(table)
         .item("topic", topic_av);
   
-    println!("Executing request [{:?}] to add item...", request);
-  
     request.send().await?;
   
     Ok(())

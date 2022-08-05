@@ -76,21 +76,9 @@ module "lambda_function_existing_package_local" {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
-    AllowExecutionFromAPIGatewayDebug = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/debug"
-    }
     AllowExecutionFromAPIGatewayTopic = {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
-    }
-    AllowExecutionFromAPIGatewayBam = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
-    }
-    AllowExecutionFromAPIGatewayDoom = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
   }
 }
