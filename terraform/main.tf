@@ -80,32 +80,14 @@ module "lambda_function_existing_package_local" {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
-<<<<<<< HEAD
     AllowExecutionFromAPIGatewayPostTopic = {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
     }
-<<<<<<< HEAD
-    AllowExecutionFromAPIGatewayGetTopic = {
-=======
-=======
->>>>>>> 4a66077 (chore: cleans up code)
     AllowExecutionFromAPIGatewayTopic = {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
     }
-<<<<<<< HEAD
-    AllowExecutionFromAPIGatewayBam = {
->>>>>>> 96837bf (feat: stores data on ddb)
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/{topic}"
-    }
-    AllowExecutionFromAPIGatewayBam = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
-    }
-=======
->>>>>>> 4a66077 (chore: cleans up code)
   }
 }
 
@@ -143,14 +125,6 @@ module "api_gateway" {
 
   # Routes and integrations
   integrations = {
-<<<<<<< HEAD
-=======
-    "POST /topic" = {
-      lambda_arn             = module.lambda_function_existing_package_local.lambda_function_arn
-      payload_format_version = "2.0"
-      timeout_milliseconds   = 12000
-    }
->>>>>>> 96837bf (feat: stores data on ddb)
     "$default" = {
       lambda_arn = module.lambda_function_existing_package_local.lambda_function_arn
     #   tls_config = jsonencode({
