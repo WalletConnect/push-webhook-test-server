@@ -91,7 +91,6 @@ async fn put_item(
     topic: &str,
   ) -> Result<(), Error> {
     let topic_av = AttributeValue::S(topic.into());
-
     let request = client
         .put_item()
         .table_name(table)
@@ -122,7 +121,6 @@ async fn get_item(
         Err(Error::from("Item does not exist"))
     }
 }
-
 
 #[tokio::main]
 async fn main() -> Result<(), Error> {
