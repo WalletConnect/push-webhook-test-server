@@ -54,7 +54,11 @@ module "lambda_function_existing_package_local" {
   policy_statements = {
     dynamodb = {
       effect    = "Allow",
+<<<<<<< HEAD
       actions   = ["dynamodb:PutItem", "dynamodb:GetItem"],
+=======
+      actions   = ["dynamodb:PutItem"],
+>>>>>>> 96837bf (feat: stores data on ddb)
       resources = [module.dynamodb_table.dynamodb_table_arn]
     }
   }
@@ -80,7 +84,15 @@ module "lambda_function_existing_package_local" {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
     }
+<<<<<<< HEAD
     AllowExecutionFromAPIGatewayGetTopic = {
+=======
+    AllowExecutionFromAPIGatewayTopic = {
+      service    = "apigateway"
+      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
+    }
+    AllowExecutionFromAPIGatewayBam = {
+>>>>>>> 96837bf (feat: stores data on ddb)
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/{topic}"
     }
@@ -125,6 +137,14 @@ module "api_gateway" {
 
   # Routes and integrations
   integrations = {
+<<<<<<< HEAD
+=======
+    "POST /topic" = {
+      lambda_arn             = module.lambda_function_existing_package_local.lambda_function_arn
+      payload_format_version = "2.0"
+      timeout_milliseconds   = 12000
+    }
+>>>>>>> 96837bf (feat: stores data on ddb)
     "$default" = {
       lambda_arn = module.lambda_function_existing_package_local.lambda_function_arn
     #   tls_config = jsonencode({

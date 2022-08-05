@@ -24,5 +24,14 @@ serde = { version = "1", features = ["derive", "rc"] }
 serde_json = "1.0"
 aws-config = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
 aws-sdk-dynamodb = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
+<<<<<<< HEAD
 async-trait = "0.1.57"
 http = "0.2.8"
+=======
+aws-http = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
+aws-smithy-client = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next", features = ["client-hyper", "rustls", "rt-tokio"] }
+aws-smithy-http = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next", features = ["rt-tokio"] }
+aws-smithy-types = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
+
+async-trait = "0.1.57"
+>>>>>>> 96837bf (feat: stores data on ddb)
