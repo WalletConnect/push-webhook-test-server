@@ -413,6 +413,8 @@ version = "0.1.0"
 dependencies = [
  "lambda_http",
  "lambda_runtime",
+ "serde",
+ "serde_json",
  "tokio",
  "tracing",
  "tracing-subscriber",
