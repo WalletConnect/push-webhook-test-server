@@ -80,6 +80,7 @@ module "lambda_function_existing_package_local" {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
+<<<<<<< HEAD
     AllowExecutionFromAPIGatewayPostTopic = {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
@@ -87,10 +88,13 @@ module "lambda_function_existing_package_local" {
 <<<<<<< HEAD
     AllowExecutionFromAPIGatewayGetTopic = {
 =======
+=======
+>>>>>>> 4a66077 (chore: cleans up code)
     AllowExecutionFromAPIGatewayTopic = {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
     }
+<<<<<<< HEAD
     AllowExecutionFromAPIGatewayBam = {
 >>>>>>> 96837bf (feat: stores data on ddb)
       service    = "apigateway"
@@ -100,6 +104,8 @@ module "lambda_function_existing_package_local" {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
     }
+=======
+>>>>>>> 4a66077 (chore: cleans up code)
   }
 }
 

@@ -95,7 +95,6 @@ async fn put_item(
         .put_item()
         .table_name(table)
         .item("topic", topic_av);
-
     request.send().await?;
 
     Ok(())
