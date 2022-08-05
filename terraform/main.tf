@@ -55,10 +55,14 @@ module "lambda_function_existing_package_local" {
     dynamodb = {
       effect    = "Allow",
 <<<<<<< HEAD
+<<<<<<< HEAD
       actions   = ["dynamodb:PutItem", "dynamodb:GetItem"],
 =======
       actions   = ["dynamodb:PutItem"],
 >>>>>>> 96837bf (feat: stores data on ddb)
+=======
+      actions   = ["dynamodb:PutItem", "dynamodb:GetItem"],
+>>>>>>> 42fbc8b (feat: exposes get API)
       resources = [module.dynamodb_table.dynamodb_table_arn]
     }
   }
@@ -81,12 +85,19 @@ module "lambda_function_existing_package_local" {
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
     AllowExecutionFromAPIGatewayPostTopic = {
+<<<<<<< HEAD
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
     }
     AllowExecutionFromAPIGatewayTopic = {
+=======
+>>>>>>> 42fbc8b (feat: exposes get API)
       service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
+      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
+    }
+    AllowExecutionFromAPIGatewayGetTopic = {
+      service    = "apigateway"
+      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/{topic}"
     }
   }
 }
