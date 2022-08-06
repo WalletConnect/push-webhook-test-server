@@ -1,7 +1,10 @@
 locals {
   app_name = "push-webhook-test-server"
   domain = var.fqdn_subdomain != null ? "${var.fqdn_subdomain}.${var.fqdn}" : var.fqdn
+  account_id = data.aws_caller_identity.current.account_id
 }
+
+data "aws_caller_identity" "current" {}
 
 data "assert_test" "workspace" {
   test  = terraform.workspace != "default"
@@ -87,12 +90,12 @@ module "lambda_function_existing_package_local" {
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
     AllowExecutionFromAPIGatewayPostTopic = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
+      principal    = "apigateway.amazonaws.com"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/"
     }
     AllowExecutionFromAPIGatewayGetTopic = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/{topic}"
+      principal  = "apigateway.amazonaws.com"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/{topic}"
     }
   }
 }
