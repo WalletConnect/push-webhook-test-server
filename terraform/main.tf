@@ -98,6 +98,10 @@ module "lambda_function_existing_package_local" {
 }
 
 module "api_gateway" {
+  depends_on = [
+    module.domain,
+  ]
+
   source = "terraform-aws-modules/apigateway-v2/aws"
 
   name          = "${terraform.workspace}-push-sns-broadcast-http"
