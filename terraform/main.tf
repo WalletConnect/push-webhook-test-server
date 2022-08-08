@@ -1,6 +1,10 @@
 locals {
   app_name = "push-webhook-test-server"
+  domain = var.fqdn_subdomain != null ? "${var.fqdn_subdomain}.${var.fqdn}" : var.fqdn
+  account_id = data.aws_caller_identity.current.account_id
 }
+
+data "aws_caller_identity" "current" {}
 
 data "assert_test" "workspace" {
   test  = terraform.workspace != "default"
@@ -20,6 +24,13 @@ resource "random_pet" "this" {
 
 resource "aws_cloudwatch_log_group" "logs" {
   name = random_pet.this.id
+}
+
+module "domain" {
+  source = "./dns"
+
+  zone_domain    = var.fqdn
+  cert_subdomain = var.fqdn_subdomain
 }
 
 module "dynamodb_table" {
@@ -79,17 +90,21 @@ module "lambda_function_existing_package_local" {
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
     AllowExecutionFromAPIGatewayPostTopic = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
+      principal    = "apigateway.amazonaws.com"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/"
     }
     AllowExecutionFromAPIGatewayGetTopic = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/{topic}"
+      principal  = "apigateway.amazonaws.com"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/{topic}"
     }
   }
 }
 
 module "api_gateway" {
+  depends_on = [
+    module.domain,
+  ]
+
   source = "terraform-aws-modules/apigateway-v2/aws"
 
   name          = "${terraform.workspace}-push-sns-broadcast-http"
@@ -108,26 +123,21 @@ module "api_gateway" {
     throttling_rate_limit    = 100
   }
 
-  create_api_domain_name           = false
-
   default_stage_access_log_destination_arn = aws_cloudwatch_log_group.logs.arn
   default_stage_access_log_format          = "$context.identity.sourceIp - - [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId $context.integrationErrorMessage"
 
   # Custom domain
-  #domain_name                 = "terraform-aws-modules.modules.tf"
-  #domain_name_certificate_arn = "arn:aws:acm:eu-west-1:052235179155:certificate/2b3a7ed9-05e1-4f9e-952b-27744ba06da6"
-
-  # Access logs
-  #default_stage_access_log_destination_arn = "arn:aws:logs:eu-west-1:835367859851:log-group:debug-apigateway"
-  #default_stage_access_log_format          = "$context.identity.sourceIp - - [$context.requestTime] \"$context.httpMethod $context.routeKey $context.protocol\" $context.status $context.responseLength $context.requestId $context.integrationErrorMessage"
+  create_api_domain_name      = true
+  domain_name                 = local.domain
+  domain_name_certificate_arn = module.domain.certificate_arn
 
   # Routes and integrations
   integrations = {
     "$default" = {
       lambda_arn = module.lambda_function_existing_package_local.lambda_function_arn
-    #   tls_config = jsonencode({
-    #     server_name_to_verify = local.domain_name
-    #   })
+      tls_config = jsonencode({
+        server_name_to_verify = local.domain
+      })
 
       response_parameters = jsonencode([
         {
@@ -150,4 +160,16 @@ module "api_gateway" {
   body = templatefile("api.yml", {
     example_function_arn = module.lambda_function_existing_package_local.lambda_function_arn
   })
+}
+
+resource "aws_route53_record" "sub_domain" {
+  name    = "${local.domain}"
+  type    = "A"
+  zone_id = "${module.domain.zone_id}"
+
+  alias {
+    name                   = "${module.api_gateway.apigatewayv2_domain_name_target_domain_name}"
+    zone_id                = "${module.api_gateway.apigatewayv2_domain_name_hosted_zone_id}"
+    evaluate_target_health = false
+  }
 }
