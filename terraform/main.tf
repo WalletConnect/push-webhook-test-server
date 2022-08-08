@@ -22,14 +22,12 @@ resource "aws_cloudwatch_log_group" "logs" {
   name = random_pet.this.id
 }
 
+# TODO: add TTL
 module "dynamodb_table" {
   source   = "terraform-aws-modules/dynamodb-table/aws"
 
   name     = "${terraform.workspace}-push-webhook-topic"
   hash_key = "topic"
-
-  ttl_attribute_name = "expiry"
-  ttl_enabled = true
 
   attributes = [
     {
@@ -85,6 +83,10 @@ module "lambda_function_existing_package_local" {
     AllowExecutionFromAPIGatewayGetTopic = {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/{topic}"
+    }
+    AllowExecutionFromAPIGatewayBam = {
+      service    = "apigateway"
+      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
     }
   }
 }

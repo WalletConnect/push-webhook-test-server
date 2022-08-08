@@ -4,23 +4,11 @@ info:
   title: Test Push Server API
   description: Test Push Server API
 paths:
-<<<<<<< HEAD
-<<<<<<< HEAD
   /:
-=======
-  /topic:
->>>>>>> 96837bf (feat: stores data on ddb)
-=======
-  /:
->>>>>>> 42fbc8b (feat: exposes get API)
     post:
       operationId: postHook
       responses:
         default:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 42fbc8b (feat: exposes get API)
           description: "Default response for POST /"
       x-amazon-apigateway-integration:
         $ref: '#/components/x-amazon-apigateway-integrations/hook'
@@ -30,12 +18,6 @@ paths:
       responses:
         default:
           description: "Default response for GET /{topic}"
-<<<<<<< HEAD
-=======
-          description: "Default response for POST /topic"
->>>>>>> 96837bf (feat: stores data on ddb)
-=======
->>>>>>> 42fbc8b (feat: exposes get API)
       x-amazon-apigateway-integration:
         $ref: '#/components/x-amazon-apigateway-integrations/hook'
 
