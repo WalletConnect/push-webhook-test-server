@@ -1,4 +1,17 @@
-use crate::function_handler;
+use lambda_http::RequestExt;
+use lambda_http::{Error};
+
+use crate::{function_handler_helper, DynamoClient};
+use async_trait::async_trait;
+
+struct MockDynamoDbClient {}
+
+#[async_trait]
+impl DynamoClient for MockDynamoDbClient {
+    async fn put_topic(&self, table: &str, topic: &str) -> Result<(), Error> {
+        Ok(())
+    }
+}
 
 #[tokio::test]
 async fn test_lambda() {
@@ -7,10 +20,11 @@ async fn test_lambda() {
   let request = lambda_http::request::from_str(input)
     .expect("failed to create request");
 
-  let response = function_handler(request).await.expect("failed to handle request");
+  let mock_ddb_client = MockDynamoDbClient{};
+  let response = function_handler_helper(request, mock_ddb_client, "test_table_name".into()).await.expect("failed to handle request");
 
   assert_eq!(response.status(), 200);
-  assert_eq!(response.into_body(), "{\"result\": \"posted result on SNS\"}".into());
+  assert_eq!(response.into_body(), "{\"result\": \"posted result on DDB\"}".into());
 }
 
 #[tokio::test]
@@ -20,7 +34,8 @@ async fn test_invalid_input() {
   let request = lambda_http::request::from_str(input)
     .expect("failed to create request");
 
-  let response = function_handler(request).await.expect("failed to handle request");
+  let mock_ddb_client = MockDynamoDbClient{};
+  let response = function_handler_helper(request, mock_ddb_client, "test_table_name".into()).await.expect("failed to handle request");
 
   assert_eq!(response.status(), 400);
 }

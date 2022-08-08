@@ -22,6 +22,21 @@ resource "aws_cloudwatch_log_group" "logs" {
   name = random_pet.this.id
 }
 
+# TODO: add TTL
+module "dynamodb_table" {
+  source   = "terraform-aws-modules/dynamodb-table/aws"
+
+  name     = "${terraform.workspace}-push-webhook-topic"
+  hash_key = "topic"
+
+  attributes = [
+    {
+      name = "topic"
+      type = "S"
+    }
+  ]
+}
+
 module "lambda_function_existing_package_local" {
   source = "terraform-aws-modules/lambda/aws"
 
@@ -32,14 +47,21 @@ module "lambda_function_existing_package_local" {
 
   environment_variables = {
     RUST_BACKTRACE = 1
+    DDB_TABLE_NAME = "${terraform.workspace}-push-webhook-topic"
+  }
+
+  attach_policy_statements = true
+  policy_statements = {
+    dynamodb = {
+      effect    = "Allow",
+      actions   = ["dynamodb:PutItem"],
+      resources = [module.dynamodb_table.dynamodb_table_arn]
+    }
   }
 
   architectures = ["arm64"]
 
   tracing_mode = "Active"
-
-
-  #create_current_version_allowed_triggers = false
 
   create_package         = false
   publish       = true
@@ -54,17 +76,9 @@ module "lambda_function_existing_package_local" {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
-    AllowExecutionFromAPIGatewayDebug = {
+    AllowExecutionFromAPIGatewayTopic = {
       service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/debug"
-    }
-    AllowExecutionFromAPIGatewayBam = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/"
-    }
-    AllowExecutionFromAPIGatewayDoom = {
-      service    = "apigateway"
-      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
+      source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/topic"
     }
   }
 }
@@ -103,7 +117,7 @@ module "api_gateway" {
 
   # Routes and integrations
   integrations = {
-    "ANY /" = {
+    "POST /topic" = {
       lambda_arn             = module.lambda_function_existing_package_local.lambda_function_arn
       payload_format_version = "2.0"
       timeout_milliseconds   = 12000
