@@ -877,14 +877,7 @@ dependencies = [
  "async-trait",
  "aws-config",
  "aws-sdk-dynamodb",
-<<<<<<< HEAD
-<<<<<<< HEAD
  "http",
-=======
->>>>>>> bde47fc (chore: cleans up dependencies)
-=======
- "http",
->>>>>>> 42fbc8b (feat: exposes get API)
  "lambda_http",
  "lambda_runtime",
  "serde",
