@@ -24,4 +24,5 @@ serde = { version = "1", features = ["derive", "rc"] }
 serde_json = "1.0"
 aws-config = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
 aws-sdk-dynamodb = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
+
 async-trait = "0.1.57"
