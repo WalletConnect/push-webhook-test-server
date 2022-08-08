@@ -4,12 +4,20 @@ info:
   title: Test Push Server API
   description: Test Push Server API
 paths:
-  /topic:
+  /:
     post:
       operationId: postHook
       responses:
         default:
-          description: "Default response for POST /topic"
+          description: "Default response for POST /"
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/hook'
+  /{topic}:
+    get:
+      operationId: getHook
+      responses:
+        default:
+          description: "Default response for GET /{topic}"
       x-amazon-apigateway-integration:
         $ref: '#/components/x-amazon-apigateway-integrations/hook'
 
