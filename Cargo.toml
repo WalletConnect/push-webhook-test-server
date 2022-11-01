@@ -1,5 +1,5 @@
 [package]
-name = "push-webhook-test-server"
+name = "data-lake-api"
 version = "0.1.0"
 edition = "2021"
 
@@ -23,6 +23,5 @@ tracing-subscriber = { version = "0.3", default-features = false, features = ["f
 serde = { version = "1", features = ["derive", "rc"] }
 serde_json = "1.0"
 aws-config = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
-aws-sdk-dynamodb = { git = "https://github.com/awslabs/aws-sdk-rust", branch = "next" }
 async-trait = "0.1.57"
 http = "0.2.8"

@@ -1,6 +1,7 @@
 locals {
-  app_name = "push-webhook-test-server"
-  domain = var.fqdn_subdomain != null ? "${var.fqdn_subdomain}.${var.fqdn}" : var.fqdn
+  app_name   = "data-lake-api"
+  fqdn       = "data.walletconnect.com"
+  domain     = terraform.workspace != "prod" ? "${terraform.workspace}.${local.fqdn}" : local.fqdn
   account_id = data.aws_caller_identity.current.account_id
 }
 
@@ -29,47 +30,20 @@ resource "aws_cloudwatch_log_group" "logs" {
 module "domain" {
   source = "./dns"
 
-  zone_domain    = var.fqdn
-  cert_subdomain = var.fqdn_subdomain
+  zone_domain    = local.fqdn
+  cert_subdomain = terraform.workspace == "prod" ? null : terraform.workspace
 }
 
-module "dynamodb_table" {
-  source   = "terraform-aws-modules/dynamodb-table/aws"
-
-  name     = "${terraform.workspace}-push-webhook-topic"
-  hash_key = "topic"
-
-  ttl_attribute_name = "expiry"
-  ttl_enabled = true
-
-  attributes = [
-    {
-      name = "topic"
-      type = "S"
-    }
-  ]
-}
-
-module "lambda_function_existing_package_local" {
+module "lambda" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "${terraform.workspace}-push-sns-broadcast"
-  description   = "Function to broadcast messages on SNS"
+  function_name = "${terraform.workspace}-${local.app_name}"
+  description   = "Function to expose data lake API"
   handler       = "bootstrap"
   runtime       = "provided.al2"
 
   environment_variables = {
     RUST_BACKTRACE = 1
-    DDB_TABLE_NAME = "${terraform.workspace}-push-webhook-topic"
-  }
-
-  attach_policy_statements = true
-  policy_statements = {
-    dynamodb = {
-      effect    = "Allow",
-      actions   = ["dynamodb:PutItem", "dynamodb:GetItem"],
-      resources = [module.dynamodb_table.dynamodb_table_arn]
-    }
   }
 
   architectures = ["arm64"]
@@ -77,8 +51,8 @@ module "lambda_function_existing_package_local" {
   tracing_mode = "Active"
 
   create_package         = false
-  publish       = true
-  local_existing_package = "../target/lambda/push-webhook-test-server/bootstrap.zip"
+  publish                = true
+  local_existing_package = "../target/lambda/${local.app_name}/bootstrap.zip"
 
   allowed_triggers = {
     AllowExecutionFromAPIGatewayDefault = {
@@ -90,7 +64,7 @@ module "lambda_function_existing_package_local" {
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
     AllowExecutionFromAPIGatewayPostTopic = {
-      principal    = "apigateway.amazonaws.com"
+      principal  = "apigateway.amazonaws.com"
       source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/"
     }
     AllowExecutionFromAPIGatewayGetTopic = {
@@ -107,7 +81,7 @@ module "api_gateway" {
 
   source = "terraform-aws-modules/apigateway-v2/aws"
 
-  name          = "${terraform.workspace}-push-sns-broadcast-http"
+  name          = "${terraform.workspace}-${local.app_name}-http"
   description   = "API to test the webhook functionality"
   protocol_type = "HTTP"
 
@@ -134,7 +108,7 @@ module "api_gateway" {
   # Routes and integrations
   integrations = {
     "$default" = {
-      lambda_arn = module.lambda_function_existing_package_local.lambda_function_arn
+      lambda_arn = module.lambda.lambda_function_arn
       tls_config = jsonencode({
         server_name_to_verify = local.domain
       })
@@ -158,18 +132,18 @@ module "api_gateway" {
   }
 
   body = templatefile("api.yml", {
-    example_function_arn = module.lambda_function_existing_package_local.lambda_function_arn
+    example_function_arn = module.lambda.lambda_function_arn
   })
 }
 
 resource "aws_route53_record" "sub_domain" {
-  name    = "${local.domain}"
+  name    = local.domain
   type    = "A"
-  zone_id = "${module.domain.zone_id}"
+  zone_id = module.domain.zone_id
 
   alias {
-    name                   = "${module.api_gateway.apigatewayv2_domain_name_target_domain_name}"
-    zone_id                = "${module.api_gateway.apigatewayv2_domain_name_hosted_zone_id}"
+    name                   = module.api_gateway.apigatewayv2_domain_name_target_domain_name
+    zone_id                = module.api_gateway.apigatewayv2_domain_name_hosted_zone_id
     evaluate_target_health = false
   }
 }

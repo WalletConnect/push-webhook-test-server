@@ -102,28 +102,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "aws-sdk-dynamodb"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
-dependencies = [
- "aws-endpoint",
- "aws-http",
- "aws-sig-auth",
- "aws-smithy-async",
- "aws-smithy-client",
- "aws-smithy-http",
- "aws-smithy-http-tower",
- "aws-smithy-json",
- "aws-smithy-types",
- "aws-types",
- "bytes",
- "fastrand",
- "http",
- "tokio-stream",
- "tower",
-]
-
-[[package]]
 name = "aws-sdk-sso"
 version = "0.12.0"
 source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
@@ -243,8 +221,6 @@ dependencies = [
  "once_cell",
  "percent-encoding",
  "pin-project",
- "tokio",
- "tokio-util",
  "tracing",
 ]
 
@@ -418,6 +394,22 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c1a816186fa68d9e426e3cb4ae4dff1fcd8e4a2c34b781bf7a822574a0d0aac8"
 dependencies = [
  "sct",
+]
+
+[[package]]
+name = "data-lake-api"
+version = "0.1.0"
+dependencies = [
+ "async-trait",
+ "aws-config",
+ "http",
+ "lambda_http",
+ "lambda_runtime",
+ "serde",
+ "serde_json",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
 ]
 
 [[package]]
@@ -869,23 +861,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0a2ca2c61bc9f3d74d2886294ab7b9853abd9c1ad903a3ac7815c58989bb7bab"
 dependencies = [
  "unicode-ident",
-]
-
-[[package]]
-name = "push-webhook-test-server"
-version = "0.1.0"
-dependencies = [
- "async-trait",
- "aws-config",
- "aws-sdk-dynamodb",
- "http",
- "lambda_http",
- "lambda_runtime",
- "serde",
- "serde_json",
- "tokio",
- "tracing",
- "tracing-subscriber",
 ]
 
 [[package]]
