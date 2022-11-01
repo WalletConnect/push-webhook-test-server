@@ -15,7 +15,7 @@ terraform {
     region               = "eu-central-1"
     bucket               = "opz"
     workspace_key_prefix = "infra/env"
-    key                  = "apps/data-lake-api.tfstate"
+    key                  = "apps/push-webhook-test-server.tfstate"
 
     force_path_style = true
   }
