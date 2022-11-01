@@ -41,14 +41,21 @@ module "lambda" {
   description   = "Function to expose data lake API"
   handler       = "bootstrap"
   runtime       = "provided.al2"
+  timeout       = 25
 
   environment_variables = {
-    RUST_BACKTRACE = 1
+    RUST_BACKTRACE = 1,
+    RDS_SECRET_ARN = "arn:aws:secretsmanager:eu-central-1:898587786287:secret:rds-db-credentials/cluster-S3WKERTXO6C5T6H7DEO3UEG5VY/root/1667092233967-Mg8sNk",
+    RDS_CLUSTER_ARN = "arn:aws:rds:eu-central-1:898587786287:cluster:prod-relay-customer-metrics",
   }
 
   architectures = ["arm64"]
 
   tracing_mode = "Active"
+
+  attach_policies = true
+  number_of_policies = 1
+  policies = ["arn:aws:iam::898587786287:policy/prod-relay-customer-metrics-data-api-access"]
 
   create_package         = false
   publish                = true
@@ -62,10 +69,6 @@ module "lambda" {
     AllowExecutionFromAPIGatewayRoot = {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
-    }
-    AllowExecutionFromAPIGatewayPostProjectId = {
-      principal  = "apigateway.amazonaws.com"
-      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/"
     }
     AllowExecutionFromAPIGatewayGetProjectId = {
       principal  = "apigateway.amazonaws.com"
@@ -82,7 +85,7 @@ module "api_gateway" {
   source = "terraform-aws-modules/apigateway-v2/aws"
 
   name          = "${terraform.workspace}-${local.app_name}-http"
-  description   = "API to test the webhook functionality"
+  description   = "API to query the data lake API"
   protocol_type = "HTTP"
 
   cors_configuration = {
@@ -108,6 +111,7 @@ module "api_gateway" {
   # Routes and integrations
   integrations = {
     "$default" = {
+      timeout_milliseconds   = 28000
       lambda_arn = module.lambda.lambda_function_arn
       tls_config = jsonencode({
         server_name_to_verify = local.domain

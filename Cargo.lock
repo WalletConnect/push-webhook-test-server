@@ -51,8 +51,8 @@ checksum = "d468802bab17cbc0cc575e9b053f41e72aa36bfa6b7f55e3529ffa43161b97fa"
 
 [[package]]
 name = "aws-config"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-http",
  "aws-sdk-sso",
@@ -69,6 +69,7 @@ dependencies = [
  "http",
  "hyper",
  "ring",
+ "time 0.3.12",
  "tokio",
  "tower",
  "tracing",
@@ -77,10 +78,11 @@ dependencies = [
 
 [[package]]
 name = "aws-endpoint"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-http",
+ "aws-smithy-types",
  "aws-types",
  "http",
  "regex",
@@ -89,22 +91,45 @@ dependencies = [
 
 [[package]]
 name = "aws-http"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-http",
  "aws-smithy-types",
  "aws-types",
+ "bytes",
  "http",
+ "http-body",
  "lazy_static",
  "percent-encoding",
+ "pin-project-lite",
  "tracing",
 ]
 
 [[package]]
+name = "aws-sdk-rdsdata"
+version = "0.0.0-local"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
+dependencies = [
+ "aws-endpoint",
+ "aws-http",
+ "aws-sig-auth",
+ "aws-smithy-async",
+ "aws-smithy-client",
+ "aws-smithy-http",
+ "aws-smithy-http-tower",
+ "aws-smithy-json",
+ "aws-smithy-types",
+ "aws-types",
+ "bytes",
+ "http",
+ "tower",
+]
+
+[[package]]
 name = "aws-sdk-sso"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.0.0-local"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-endpoint",
  "aws-http",
@@ -124,8 +149,8 @@ dependencies = [
 
 [[package]]
 name = "aws-sdk-sts"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.0.0-local"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-endpoint",
  "aws-http",
@@ -145,8 +170,8 @@ dependencies = [
 
 [[package]]
 name = "aws-sig-auth"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-sigv4",
  "aws-smithy-http",
@@ -157,8 +182,8 @@ dependencies = [
 
 [[package]]
 name = "aws-sigv4"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-http",
  "form_urlencoded",
@@ -174,8 +199,8 @@ dependencies = [
 
 [[package]]
 name = "aws-smithy-async"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "futures-util",
  "pin-project-lite",
@@ -185,8 +210,8 @@ dependencies = [
 
 [[package]]
 name = "aws-smithy-client"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-async",
  "aws-smithy-http",
@@ -199,7 +224,6 @@ dependencies = [
  "hyper",
  "hyper-rustls",
  "lazy_static",
- "pin-project",
  "pin-project-lite",
  "tokio",
  "tower",
@@ -208,8 +232,8 @@ dependencies = [
 
 [[package]]
 name = "aws-smithy-http"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-types",
  "bytes",
@@ -220,36 +244,38 @@ dependencies = [
  "hyper",
  "once_cell",
  "percent-encoding",
- "pin-project",
+ "pin-project-lite",
+ "tokio",
+ "tokio-util",
  "tracing",
 ]
 
 [[package]]
 name = "aws-smithy-http-tower"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-http",
  "bytes",
  "http",
  "http-body",
- "pin-project",
+ "pin-project-lite",
  "tower",
  "tracing",
 ]
 
 [[package]]
 name = "aws-smithy-json"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-types",
 ]
 
 [[package]]
 name = "aws-smithy-query"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-types",
  "urlencoding",
@@ -257,8 +283,8 @@ dependencies = [
 
 [[package]]
 name = "aws-smithy-types"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "itoa",
  "num-integer",
@@ -268,16 +294,16 @@ dependencies = [
 
 [[package]]
 name = "aws-smithy-xml"
-version = "0.42.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "xmlparser",
 ]
 
 [[package]]
 name = "aws-types"
-version = "0.12.0"
-source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#9cefdbe939df7f0ae0b4c98c0b3596b3da50b9a6"
+version = "0.49.0"
+source = "git+https://github.com/awslabs/aws-sdk-rust?branch=next#fefcd7dc4e68accd4aefb2650f556a157d7233a2"
 dependencies = [
  "aws-smithy-async",
  "aws-smithy-client",
@@ -388,20 +414,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5827cebf4670468b8772dd191856768aedcb1b0278a04f989f7766351917b9dc"
 
 [[package]]
-name = "ct-logs"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1a816186fa68d9e426e3cb4ae4dff1fcd8e4a2c34b781bf7a822574a0d0aac8"
-dependencies = [
- "sct",
-]
-
-[[package]]
 name = "data-lake-api"
 version = "0.1.0"
 dependencies = [
  "async-trait",
  "aws-config",
+ "aws-sdk-rdsdata",
  "http",
  "lambda_http",
  "lambda_runtime",
@@ -614,19 +632,17 @@ dependencies = [
 
 [[package]]
 name = "hyper-rustls"
-version = "0.22.1"
+version = "0.23.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5f9f7a97316d44c0af9b0301e65010573a853a9fc97046d7331d7f6bc0fd5a64"
+checksum = "d87c48c02e0dc5e3b849a2041db3029fd066650f8f717c07bf8ed78ccb895cac"
 dependencies = [
- "ct-logs",
- "futures-util",
+ "http",
  "hyper",
  "log",
  "rustls",
  "rustls-native-certs",
  "tokio",
  "tokio-rustls",
- "webpki",
 ]
 
 [[package]]
@@ -926,11 +942,10 @@ dependencies = [
 
 [[package]]
 name = "rustls"
-version = "0.19.1"
+version = "0.20.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35edb675feee39aec9c99fa5ff985081995a06d594114ae14cbe797ad7b7a6d7"
+checksum = "539a2bfe908f471bfa933876bd1eb6a19cf2176d375f82ef7f99530a40e48c2c"
 dependencies = [
- "base64",
  "log",
  "ring",
  "sct",
@@ -939,14 +954,23 @@ dependencies = [
 
 [[package]]
 name = "rustls-native-certs"
-version = "0.5.0"
+version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5a07b7c1885bd8ed3831c289b7870b13ef46fe0e856d288c30d9cc17d75a2092"
+checksum = "0167bac7a9f490495f3c33013e7722b53cb087ecbe082fb0c6387c96f634ea50"
 dependencies = [
  "openssl-probe",
- "rustls",
+ "rustls-pemfile",
  "schannel",
  "security-framework",
+]
+
+[[package]]
+name = "rustls-pemfile"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0864aeff53f8c05aa08d86e5ef839d3dfcf07aeba2db32f12db0ef716e87bd55"
+dependencies = [
+ "base64",
 ]
 
 [[package]]
@@ -967,9 +991,9 @@ dependencies = [
 
 [[package]]
 name = "sct"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b362b83898e0e69f38515b82ee15aa80636befe47c3b6d3d89a911e78fc228ce"
+checksum = "d53dcdb7c9f8158937a7981b48accfd39a43af418591a5d008c7b22b5e1b7ca4"
 dependencies = [
  "ring",
  "untrusted",
@@ -1155,9 +1179,9 @@ dependencies = [
 
 [[package]]
 name = "tokio-rustls"
-version = "0.22.0"
+version = "0.23.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bc6844de72e57df1980054b38be3a9f4702aba4858be64dd700181a8a6d0e1b6"
+checksum = "c43ee83903113e03984cb9e5cebe6c04a5116269e900e3ddba8f068a62adda59"
 dependencies = [
  "rustls",
  "tokio",
@@ -1373,9 +1397,9 @@ dependencies = [
 
 [[package]]
 name = "webpki"
-version = "0.21.4"
+version = "0.22.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8e38c0608262c46d4a56202ebabdeb094cef7e560ca7a226c6bf055188aa4ea"
+checksum = "f095d78192e208183081cc07bc5515ef55216397af48b873e5edcd72637fa1bd"
 dependencies = [
  "ring",
  "untrusted",
