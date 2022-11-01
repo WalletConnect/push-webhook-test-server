@@ -74,6 +74,13 @@ jobs:
           toolchain: ${{ matrix.cargo.rust }}
           profile: default
           override: true
+          
+      - name: Install ziglang for cargo-lambda
+        run: |
+          pip install ziglang
+          cargo install cargo-zigbuild
+      - name: Install cargo-lambda
+        run: pip install cargo-lambda
 
       - name: "Cargo ${{ matrix.cargo.name }}"
         uses: actions-rs/cargo@v1
