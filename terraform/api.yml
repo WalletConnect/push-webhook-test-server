@@ -1,29 +1,21 @@
 openapi: "3.0.1"
 info:
   version: 0.0.1
-  title: Test Push Server API
-  description: Test Push Server API
+  title: Data Lake API
+  description: Data Lake API
 paths:
-  /:
-    post:
-      operationId: postHook
-      responses:
-        default:
-          description: "Default response for POST /"
-      x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/hook'
-  /{topic}:
+  /{projectId}:
     get:
-      operationId: getHook
+      operationId: getStats
       responses:
         default:
-          description: "Default response for GET /{topic}"
+          description: "Default response for GET /{projectId}"
       x-amazon-apigateway-integration:
-        $ref: '#/components/x-amazon-apigateway-integrations/hook'
+        $ref: '#/components/x-amazon-apigateway-integrations/stats'
 
 components:
   x-amazon-apigateway-integrations:
-    hook:
+    stats:
       type: AWS_PROXY
       httpMethod: GET
       uri: "${example_function_arn}"

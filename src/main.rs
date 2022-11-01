@@ -7,27 +7,27 @@ use http::Method;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 #[derive(Serialize, Deserialize)]
-struct TopicRequestBody {
-    topic: String,
+struct StatsRequestBody {
+    stats: String,
 }
 
 async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let _config = aws_config::load_from_env().await;
 
     match *event.method() {
-        Method::GET => get_topic(event).await,
+        Method::GET => get_stats(event).await,
         _ => panic!("Method not supported")
     }
 }
 
-async fn get_topic(event: Request) -> Result<Response<Body>, Error> {
+async fn get_stats(event: Request) -> Result<Response<Body>, Error> {
     let path = event.uri().path();
-    let _topic = &path[1..path.len()];
+    let _stats = &path[1..path.len()];
     
     let resp = Response::builder()
         .status(200)
         .header("content-type", "text/json")
-        .body("{\"topic\": \"exists\"}".into())
+        .body("{\"stats\": \"exists\"}".into())
         .map_err(Box::new)?;
     Ok(resp)
 }

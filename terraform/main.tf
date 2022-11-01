@@ -63,13 +63,13 @@ module "lambda" {
       service    = "apigateway"
       source_arn = "${module.api_gateway.apigatewayv2_api_execution_arn}/*/*/"
     }
-    AllowExecutionFromAPIGatewayPostTopic = {
+    AllowExecutionFromAPIGatewayPostProjectId = {
       principal  = "apigateway.amazonaws.com"
       source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/"
     }
-    AllowExecutionFromAPIGatewayGetTopic = {
+    AllowExecutionFromAPIGatewayGetProjectId = {
       principal  = "apigateway.amazonaws.com"
-      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/{topic}"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/{projectId}"
     }
   }
 }
