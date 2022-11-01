@@ -1,10 +1,10 @@
-use lambda_http::{run, service_fn, Body, Error, Request, Response, RequestExt};
-use serde::{Deserialize, Serialize};
 use async_trait::async_trait;
-use tracing::{error, trace, info};
-use std::{env};
+use aws_sdk_rdsdata::Client;
 use http::Method;
-use aws_sdk_rdsdata::{Client};
+use lambda_http::{run, service_fn, Body, Error, Request, Response};
+use serde::{Deserialize, Serialize};
+use std::env;
+use tracing::info;
 
 #[derive(Serialize, Deserialize)]
 struct StatsRequestBody {
@@ -16,32 +16,51 @@ async fn function_handler(event: Request) -> Result<Response<Body>, Error> {
     let client = Client::new(&config);
 
     match *event.method() {
-        Method::GET => get_stats(event, &client).await,
-        _ => panic!("Method not supported")
+        Method::GET => query(event, &client).await,
+        _ => panic!("Method not supported"),
     }
 }
 
-async fn get_stats(event: Request, client: &Client) -> Result<Response<Body>, Error> {
+#[async_trait]
+trait RdsClient {
+    async fn query(&self, query: &str) -> Result<usize, Error>;
+}
+
+#[async_trait]
+impl RdsClient for &aws_sdk_rdsdata::Client {
+    async fn query(&self, query: &str) -> Result<usize, Error> {
+        let cluster_arn = env::var("RDS_CLUSTER_ARN")
+            .expect("RDS_CLUSTER_ARN environment variable is not defined");
+        let secret_arn =
+            env::var("RDS_SECRET_ARN").expect("RDS_SECRET_ARN environment variable is not defined");
+
+        let st = self
+            .execute_statement()
+            .resource_arn(cluster_arn)
+            .database("postgres") // Do not confuse this with db instance name
+            .sql(query)
+            .secret_arn(secret_arn);
+
+        let res = st.send().await.unwrap();
+
+        Ok(res.records().unwrap().len())
+    }
+}
+
+async fn query(event: Request, client: impl RdsClient) -> Result<Response<Body>, Error> {
     let path = event.uri().path();
     let project_id = &path[1..path.len()];
 
-    let query = format!("SELECT * FROM project_data WHERE projectid = '{}' LIMIT 5;", project_id);
-    let cluster_arn = env::var("RDS_CLUSTER_ARN").expect("RDS_CLUSTER_ARN environment variable is not defined");
-    let secret_arn = env::var("RDS_SECRET_ARN").expect("RDS_SECRET_ARN environment variable is not defined");
+    let query = format!(
+        "SELECT * FROM project_data WHERE projectid = '{}' LIMIT 5;",
+        project_id
+    );
 
-    let st = client
-        .execute_statement()
-        .resource_arn(cluster_arn)
-        .database("postgres") // Do not confuse this with db instance name
-        .sql(query)
-        .secret_arn(secret_arn);
-
-    let result = st.send().await?;
-    let result_count = result.records().unwrap().len();
+    let result_count = client.query(&query).await.unwrap();
     let response_body = format!("{{\"stats\": \"{}\"}}", result_count);
 
-    info!("Result: {:?}", result);
-    
+    info!("Result: {:?}", result_count);
+
     let resp = Response::builder()
         .status(200)
         .header("content-type", "text/json")
