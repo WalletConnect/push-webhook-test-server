@@ -11,7 +11,7 @@ on:
   push:
     branches: ['master', 'feat/ci']
     paths-ignore:
-      - '.github/**'
+      #- '.github/**'
       - 'terraform/**'
       - 'docs/**'
       - 'README.md'
