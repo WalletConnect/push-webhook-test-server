@@ -1,7 +1,7 @@
 {
     "version": "2.0",
     "routeKey": "$default",
-    "rawPath": "/topic-not-existing",
+    "rawPath": "/client_id-not-existing",
     "rawQueryString": "parameter1=value1&parameter1=value2&parameter2=value",
     "cookies": [ "cookie1=value1", "cookie2=value2" ],
     "headers": {

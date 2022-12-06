@@ -12,12 +12,20 @@ paths:
           description: "Default response for POST /"
       x-amazon-apigateway-integration:
         $ref: '#/components/x-amazon-apigateway-integrations/hook'
-  /{topic}:
+  /clients/{clientId}:
+    post:
+      operationId: postClientHook
+      responses:
+        default:
+          description: "Default response for POST /clients/{clientId}"
+      x-amazon-apigateway-integration:
+        $ref: '#/components/x-amazon-apigateway-integrations/hook'
+  /{clientId}:
     get:
       operationId: getHook
       responses:
         default:
-          description: "Default response for GET /{topic}"
+          description: "Default response for GET /{clientId}"
       x-amazon-apigateway-integration:
         $ref: '#/components/x-amazon-apigateway-integrations/hook'
 

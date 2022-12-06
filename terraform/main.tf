@@ -36,15 +36,15 @@ module "domain" {
 module "dynamodb_table" {
   source   = "terraform-aws-modules/dynamodb-table/aws"
 
-  name     = "${terraform.workspace}-push-webhook-topic"
-  hash_key = "topic"
+  name     = "${terraform.workspace}-push-webhook-clients"
+  hash_key = "client_id"
 
   ttl_attribute_name = "expiry"
   ttl_enabled = true
 
   attributes = [
     {
-      name = "topic"
+      name = "client_id"
       type = "S"
     }
   ]
@@ -60,14 +60,14 @@ module "lambda_function_existing_package_local" {
 
   environment_variables = {
     RUST_BACKTRACE = 1
-    DDB_TABLE_NAME = "${terraform.workspace}-push-webhook-topic"
+    DDB_TABLE_NAME = "${terraform.workspace}-push-webhook-clients"
   }
 
   attach_policy_statements = true
   policy_statements = {
     dynamodb = {
       effect    = "Allow",
-      actions   = ["dynamodb:PutItem", "dynamodb:GetItem"],
+      actions   = ["dynamodb:Put*", "dynamodb:Get*"],
       resources = [module.dynamodb_table.dynamodb_table_arn]
     }
   }
@@ -91,11 +91,15 @@ module "lambda_function_existing_package_local" {
     }
     AllowExecutionFromAPIGatewayPostTopic = {
       principal    = "apigateway.amazonaws.com"
-      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*"
     }
-    AllowExecutionFromAPIGatewayGetTopic = {
+    AllowExecutionFromAPIGatewayPostClient = {
+      principal    = "apigateway.amazonaws.com"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/clients/{clientId}"
+    }
+    AllowExecutionFromAPIGatewayGetClientId = {
       principal  = "apigateway.amazonaws.com"
-      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/{topic}"
+      source_arn = "arn:aws:execute-api:${var.region}:${local.account_id}:${module.api_gateway.apigatewayv2_api_id}/*/*/{clientId}"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "2.0",
   "routeKey": "$default",
-  "rawPath": "/sample-topic",
+  "rawPath": "/clients/abc",
   "rawQueryString": "parameter1=value1&parameter1=value2&parameter2=value",
   "cookies": [ "cookie1=value1", "cookie2=value2" ],
   "headers": {
