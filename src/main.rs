@@ -51,25 +51,17 @@ async fn post_client_id(
     let path = event.uri().path();
     let client_id = &path[9..path.len()];
     let body = event.body();
-    match std::str::from_utf8(body) {
-        Ok(payload) => {
-            info!("Posting record for client_id: {}", client_id);
-            ddb_client
-                .put_client_id(table_name, &client_id, payload)
-                .await?;
-            let resp = Response::builder()
-                .status(200)
-                .header("content-type", "text/json")
-                .body("{\"result\": \"posted result on DDB\"}".into())
-                .map_err(Box::new)?;
-            Ok(resp)
-        }
-        Err(_) => Ok(Response::builder()
-            .status(400)
-            .header("content-type", "text/json")
-            .body("{\"result\": \"invalid body\"}".into())
-            .map_err(Box::new)?),
-    }
+    let payload = std::str::from_utf8(body).unwrap_or("{}");
+    info!("Posting record for client_id: {}", client_id);
+    ddb_client
+        .put_client_id(table_name, &client_id, payload)
+        .await?;
+    let resp = Response::builder()
+        .status(200)
+        .header("content-type", "text/json")
+        .body("{\"result\": \"posted result on DDB\"}".into())
+        .map_err(Box::new)?;
+    Ok(resp)
 }
 
 async fn get_client_id(
@@ -139,7 +131,8 @@ async fn get_item(client: &Client, table: &str, client_id: &str) -> Result<Strin
 
     if let Some(item) = res.item {
         if let Some(payload) = item.get("payload") {
-            Ok(payload.as_s().unwrap().clone())
+            let default = "{}".to_string();
+            Ok(payload.as_s().unwrap_or(&default).clone())
         } else {
             Err(Error::from("Missing payload"))
         }

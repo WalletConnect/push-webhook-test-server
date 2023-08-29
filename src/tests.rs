@@ -25,7 +25,7 @@ impl DynamoClient for MockDynamoDbClient {
         if client_id.eq("client_id-not-existing") {
             Err(Error::from("Boom"))
         } else {
-            Ok(String::new())
+            Ok("{}".to_string())
         }
     }
 }
@@ -60,7 +60,7 @@ async fn test_get_nominal() {
         .expect("failed to handle request");
 
     assert_eq!(response.status(), 200);
-    assert_eq!(response.into_body(), "{\"client_id\": \"exists\"}".into());
+    assert_eq!(response.into_body(), "{\"client_id\": \"exists\", \"payload\": {}}".into());
 }
 
 #[tokio::test]
